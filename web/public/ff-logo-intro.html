@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>FF — Split / Snap / Squish</title>
+<style>
+/* FF:CSS-BEGIN */
+[data-ff-logo]{display:block;position:relative;isolation:isolate;overflow:hidden;aspect-ratio:1;width:100%;background:transparent;contain:layout paint}
+[data-ff-logo] svg{display:block;width:100%;height:100%;overflow:visible}
+[data-ff-logo] [data-n]{transform-origin:0 0;will-change:transform,opacity}
+[data-ff-logo] [data-n="rest"]{will-change:auto}
+[data-ff-logo] svg[data-ff-rest] [data-n]{will-change:auto}
+[data-ff-logo] [data-n="active"],[data-ff-logo] [data-n="ring"],[data-ff-logo] [data-n="dust"],[data-ff-logo] [data-n="particles"],[data-ff-logo] [data-n="shadow"]{opacity:0}
+/* FF:CSS-END */
+html:has(body[data-ff-standalone]),body[data-ff-standalone]{margin:0;width:100%;height:100%;background:transparent}
+body[data-ff-standalone]>[data-ff-logo]{width:100%;height:100%;aspect-ratio:auto}
+</style>
+</head>
+<body data-ff-standalone>
+<div data-ff-logo role="img" aria-label="FF logo"></div>
+<template data-ff-template>
+<!-- FF:SVG-BEGIN -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-60 -60 320 320" aria-hidden="true">
+ <defs>
+  <clipPath id="ff-clip"><rect width="40" height="40" rx="9"/></clipPath>
+  <mask id="ff-ring-mask" maskUnits="userSpaceOnUse" x="-28" y="-28" width="56" height="56">
+   <circle r="18.8" fill="white"/><circle data-n="hole" r="17.6" fill="black"/>
+  </mask>
+ </defs>
+ <g transform="scale(5)">
+  <g data-n="shadow"><ellipse cx="20" cy="41" rx="18" ry="1.8" fill="#16200c"/></g>
+  <g data-n="ring"><circle r="18.8" fill="#e8f8ab" mask="url(#ff-ring-mask)"/></g>
+  <g data-n="dust" fill="#e8f8ab"><ellipse data-n="d0" cx="10" cy="40" rx="2.8" ry="1"/><ellipse data-n="d1" cx="20" cy="40" rx="3" ry="1.2"/><ellipse data-n="d2" cx="30" cy="40" rx="2.4" ry="1"/></g>
+  <g data-n="body">
+   <g data-n="active">
+    <g data-n="pop">
+     <g data-n="card"><rect width="40" height="40" rx="9" fill="#d8f36a"/></g>
+     <g data-n="impact" fill="#16200c">
+      <g data-n="front">
+       <g data-n="fs"><path d="M8 30V16C8 9 12 7 18 7H21V13H18C15 13 14 14 14 17V30H8Z"/></g>
+       <g data-n="fb"><path d="M6 17H19V22H6Z"/></g>
+      </g>
+      <g data-n="back">
+       <g data-n="bs"><path d="M21 33V19C21 12 25 10 31 10H34V16H31C28 16 27 17 27 20V33H21Z"/></g>
+       <g data-n="bb"><path d="M19 20H32V25H19Z"/></g>
+      </g>
+     </g>
+     <g clip-path="url(#ff-clip)"><g data-n="gloss" opacity="0"><path d="M-3-15H1V55H-3Z" fill="white"/><path d="M2-15H3V55H2Z" fill="white" opacity=".32"/></g></g>
+    </g>
+   </g>
+  </g>
+  <g data-n="rest"><rect width="40" height="40" rx="9" fill="#d8f36a"/><g fill="#16200c"><path d="M8 30V16C8 9 12 7 18 7H21V13H18C15 13 14 14 14 17V30H8ZM6 17H19V22H6Z"/><path d="M21 33V19C21 12 25 10 31 10H34V16H31C28 16 27 17 27 20V33H21ZM19 20H32V25H19Z"/></g></g>
+  <g data-n="particles" fill="#e8f8ab">
+   <circle data-n="p0" r=".55"/><circle data-n="p1" r=".35" fill="#16200c"/><circle data-n="p2" r=".48"/><circle data-n="p3" r=".32"/><circle data-n="p4" r=".6" fill="#16200c"/><circle data-n="p5" r=".3"/><circle data-n="p6" r=".45"/><circle data-n="p7" r=".34" fill="#16200c"/><circle data-n="p8" r=".54"/><circle data-n="p9" r=".31"/><circle data-n="p10" r=".42" fill="#16200c"/><circle data-n="p11" r=".3"/>
+  </g>
+ </g>
+</svg>
+<!-- FF:SVG-END -->
+</template>
+<script>
+(function(){
+'use strict';
+/* FF:CORE-BEGIN */
+const clamp=(x,a=0,b=1)=>Math.max(a,Math.min(b,x));
+const out=x=>1-Math.pow(1-x,3);
+const both=x=>x<.5?4*x*x*x:1-Math.pow(-2*x+2,3)/2;
+const back=s=>x=>1+(s+1)*Math.pow(x-1,3)+s*Math.pow(x-1,2);
+const elastic=p=>x=>x===0||x===1?x:Math.pow(2,-10*x)*Math.sin((x-p/4)*2*Math.PI/p)+1;
+const E={out,both,burst:x=>x===1?1:1-Math.pow(2,-10*x),snap:x=>Math.pow(x,5),b18:back(1.8),b24:back(2.4),jelly:elastic(.45)};
+function lane(t,keys){
+ if(t<=keys[0][0])return keys[0][1];
+ for(let i=1;i<keys.length;i++)if(t<keys[i][0]){
+  const a=keys[i-1],b=keys[i];return a[1]+(b[1]-a[1])*E[b[2]||'out'](clamp((t-a[0])/(b[0]-a[0])));
+ }
+ return keys[keys.length-1][1];
+}
+function mulberry32(seed){return()=>{let t=seed+=0x6d2b79f5;t=Math.imul(t^t>>>15,t|1);t^=t+Math.imul(t^t>>>7,t|61);return((t^t>>>14)>>>0)/4294967296;};}
+const rnd=mulberry32(0x46464c4f);
+const motes=Array.from({length:12},(_,i)=>({a:i*Math.PI/6+(rnd()-.5)*.22,d:8+rnd()*10,life:.5+rnd()*.3,spin:(rnd()-.5)*90}));
+// All coordinates below use native logo units. Multiply by five for stage units.
+const tracks={
+ pop:[[0,0],[.20,.96,'b18'],[.29,1.035,'out'],[.45,1,'jelly']],
+ popY:[[0,8],[.20,-1.3,'out'],[.27,0,'snap'],[.45,0]],
+ popK:[[0,0],[.12,-.30,'out'],[.27,.18,'out'],[.35,-.072],[.42,.0288],[.48,-.01152],[.52,0]],
+ load:[[0,0],[1.15,0],[1.30,.05,'both'],[1.40,.05],[1.52,-.04],[1.76,.016],[1.94,0]],
+ splitX:[[0,0],[1.15,0],[1.30,.30,'both'],[1.40,.30],[1.84,-2.533,'burst'],[1.96,-2.533],[2.03,-2.736,'both'],[2.10,-2.736],[2.25,0,'snap'],[2.2833,.10],[2.35,-.04],[2.46,.016],[2.60,0]],
+ splitY:[[0,0],[1.40,0],[1.84,-.585,'burst'],[2.03,-.632],[2.10,-.632],[2.25,0,'snap'],[2.2833,.023],[2.35,-.0092],[2.60,0]],
+ arc:[[0,0],[1.40,0],[1.56,-.40,'both'],[1.94,0,'both']],
+ travelK:[[0,0],[1.40,0],[1.47,.30],[1.86,0],[2.10,0],[2.2167,.22,'snap'],[2.25,0,'snap']],
+ splitR:[[0,0],[1.68,0],[1.84,-2],[1.94,.8],[2.02,-.32],[2.10,0]],
+ barX:[[0,0],[1.40,0],[1.84,-1,'burst'],[1.96,-1],[2.0167,-1.08,'both'],[2.0833,-1.08],[2.2667,0,'snap'],[2.30,.12],[2.38,-.048],[2.48,.0192],[2.64,0]],
+ barK:[[0,0],[1.40,0],[1.48,.24],[1.90,0],[2.0833,0],[2.2167,.22,'snap'],[2.2667,.16],[2.35,-.064],[2.46,.0256],[2.58,-.01024],[2.76,0]],
+ impact:[[0,0],[2.233333,0],[2.25,.24,'snap'],[2.266667,.24],[2.33,-.08],[2.43,.032],[2.55,-.0128],[2.68,.00512],[2.85,0]],
+ cardK:[[0,0],[2.25,0],[2.266667,-.06,'snap'],[2.30,-.06],[2.39,.024],[2.51,-.0096],[2.66,.00384],[2.85,0]],
+ wobble:[[0,0],[2.40,0],[2.47,-1.5],[2.63,.60],[2.78,-.24],[2.93,.096],[3.12,0]],
+ shake:[[0,0],[2.30,0],[2.316667,.119,'snap'],[2.331667,-.119,'snap'],[2.346667,.0476,'snap'],[2.361667,-.0476,'snap'],[2.376667,.01904,'snap'],[2.391667,-.01904,'snap'],[2.406667,0,'out']]
+};
+function arrival(t,start,dir,crossbar){
+ const land=start+.30;
+ return{
+  x:lane(t,[[0,dir*42],[start-.08,dir*42],[start,dir*45,'both'],[land,0,crossbar?'b24':'b18']]),
+  k:lane(t,[[0,0],[start,0],[start+.11,.24],[land,.16],[land+.08,-.064],[land+.16,.0256],[land+.24,-.01024],[land+.32,0]]),
+  r:lane(t,[[0,0],[start,0],[land,dir*2.6],[land+.08,-dir*1.04],[land+.16,dir*.416],[land+.24,-dir*.1664],[land+.32,0]])
+ };
+}
+class Painter{
+ constructor(svg){
+  this.svg=svg;this.isRest=null;this.n={};svg.querySelectorAll('[data-n]').forEach(el=>this.n[el.dataset.n]=el);
+ }
+ opacity(name,value){const e=this.n[name],v=String(Math.round(value*1e6)/1e6);if(e.style.opacity!==v)e.style.opacity=v;}
+ // R(rotation) R(axis) S(1+k,1-.85k) R(-axis), about a deliberate contact edge.
+ pose(name,x=0,y=0,rotation=0,k=0,ox=20,oy=20,axis=0,uniform=1){
+  const r=rotation*Math.PI/180,h=axis*Math.PI/180,c=Math.cos(h),s=Math.sin(h),cr=Math.cos(r),sr=Math.sin(r);
+  const sx=(1+k)*uniform,sy=(1-.85*k)*uniform,A=c*c*sx+s*s*sy,B=c*s*(sx-sy),D=s*s*sx+c*c*sy;
+  const a=cr*A-sr*B,b=sr*A+cr*B,C=cr*B-sr*D,d=sr*B+cr*D;
+  const values=[a,b,C,d,x+ox-a*ox-C*oy,y+oy-b*ox-d*oy].map(v=>Math.round(v*1e6)/1e6);
+  const value='matrix('+values.join(',')+')',el=this.n[name];if(el.style.transform!==value)el.style.transform=value;
+ }
+ draw(t,idle=false){
+  const rest=t>=3.95&&!idle;
+  if(rest!==this.isRest){this.svg.toggleAttribute('data-ff-rest',rest);this.isRest=rest;}
+  this.opacity('rest',rest?1:0);this.opacity('active',rest?0:1);
+  const T=name=>lane(Math.min(t,3.95),tracks[name]);
+  let breath=0;
+  if(idle)breath=.012*Math.sin((t-5)*Math.PI*2/2.4)*out(clamp((t-5)/.35));
+  else if(t>2.65&&t<3.95)breath=.015*Math.sin((t-2.65)*Math.PI*2/.8)*Math.sin(Math.PI*clamp((t-2.65)/1.30));
+  this.pose('body',rest?0:T('shake'),0,rest?0:T('wobble'),breath);
+  if(rest){this.opacity('ring',0);this.opacity('particles',0);this.opacity('dust',0);this.opacity('shadow',0);return;}
+  this.pose('pop',0,idle?0:T('popY'),0,idle?0:T('popK'),20,40,0,idle?1:T('pop'));
+  this.pose('card',0,0,0,idle?0:T('load')+T('cardK'),20,40);
+  this.pose('impact',0,0,0,idle?0:T('impact'),20,20,13);
+  const x=idle?0:T('splitX'),y=idle?0:T('splitY'),arc=idle?0:T('arc'),stretch=idle?0:T('travelK'),rotation=idle?0:T('splitR');
+  this.pose('front',x,y+arc,rotation,stretch,21,19,13);
+  this.pose('back',-x,-y-arc,-rotation,stretch,19,22,13);
+  let idleBar=0;
+  if(idle&&t>=12){const phase=(t-12)%7;idleBar=lane(phase,[[0,0],[.08,.021,'both'],[.16,.021],[.25,-.30,'out'],[.55,0,'b24'],[7,0]]);}
+  for(const [name,start,dir,bar,ox,oy] of [['fs',.45,-1,false,21,19],['bs',.53,1,false,19,22],['fb',.57,1,true,19,19.5],['bb',.65,-1,true,19,22.5]]){
+   const a=idle?{x:0,k:0,r:0}:arrival(t,start,dir,bar),side=name[0]==='f'?1:-1;
+   this.opacity(name,idle||t>=start-.08?1:0);
+   this.pose(name,a.x+(bar?(idle?side*idleBar:side*T('barX')):0),0,a.r,a.k+(bar&&!idle?T('barK'):0),ox,oy,bar?0:13);
+  }
+  const dust=clamp((t-.27)/.38);this.opacity('dust',!idle&&t>=.27&&t<.65?.20*(1-dust):0);
+  for(let i=0;i<3;i++)this.pose('d'+i,(i-1)*out(dust)*4,-out(dust)*.8,0,0,10+i*10,40,0,1+out(dust));
+  const ringStart=2.283333,u=clamp((t-ringStart)/.45),ru=out(u);
+  this.opacity('ring',!idle&&t>=ringStart&&t<ringStart+.45?.9*(1-ru):0);
+  this.pose('ring',20,20,0,0,0,0,0,.5+1.2*ru);this.pose('hole',0,0,0,0,0,0,0,1+(18.8/17.6-1)*ru);
+  this.opacity('particles',!idle&&t>=2.30&&t<3.10?1:0);
+  for(let i=0;i<12;i++){
+   const p=motes[i],q=clamp((t-2.30)/p.life),travel=out(q);
+   this.pose('p'+i,20+Math.cos(p.a)*(7+p.d*travel),20+Math.sin(p.a)*(7+p.d*travel)+4*q*q,p.spin*travel,0,0,0,0,1-.85*both(q));
+   this.opacity('p'+i,1-both(q));
+  }
+  const shine=clamp((t-3.25)/.5);
+  this.pose('gloss',-8+56*both(shine),0,-20,0,0,20);
+  this.opacity('gloss',!idle&&t>=3.25&&t<3.75?.22:0);
+  const shadow=clamp((t-3.25)/.55);this.pose('shadow',0,0,0,0,20,41,0,1+.12*Math.sin(shadow*Math.PI));
+  this.opacity('shadow',!idle&&t>=3.25&&t<3.80?.12*Math.sin(shadow*Math.PI):0);
+ }
+}
+/* FF:CORE-END */
+/* FF:WEB-BEGIN */
+if(window.FFLogo)return;
+const template=document.querySelector('template[data-ff-template]');
+const instances=new Map(),reduce=matchMedia('(prefers-reduced-motion: reduce)');
+let raf=0,last=0,serial=0,disposed=false,speed=1,manuallyPaused=false;
+const queryBackground=document.body.hasAttribute('data-ff-standalone')?new URLSearchParams(location.search).get('background'):null;
+const defaults={loop:false,idle:true,background:['lime','ink','transparent'].includes(queryBackground)?queryBackground:'ink',size:'100%'};
+function ready(i){return!disposed&&!manuallyPaused&&!document.hidden&&i.visible&&!reduce.matches&&(i.options.loop||i.options.idle||i.time<5);}
+function wake(){if(!raf&&Array.from(instances.values()).some(ready))raf=requestAnimationFrame(tick);}
+function tick(now){
+ raf=0;const dt=last?Math.min((now-last)/1000,.05)*speed:0;last=now;
+ for(const i of instances.values())if(ready(i)){
+  i.time+=dt;const t=i.options.loop?i.time%5:i.time;
+  i.painter.draw(t,i.options.idle&&!i.options.loop&&t>=5);
+ }
+ if(Array.from(instances.values()).some(ready))raf=requestAnimationFrame(tick);else last=0;
+}
+function stop(){if(raf)cancelAnimationFrame(raf);raf=0;last=0;}
+function refresh(i){
+ const o=i.options,bg=o.background==='lime'?'#d8f36a':o.background==='ink'?'#16200c':'transparent';
+ i.host.style.background=bg;
+ const size=typeof o.size==='number'?o.size+'px':o.size;
+ if(size){i.host.style.width=size;i.host.style.height=typeof o.size==='number'?size:i.host.parentElement.hasAttribute('data-ff-standalone')&&size==='100%'?'100%':'auto';}
+ if(i.host.parentElement.hasAttribute('data-ff-standalone'))document.body.style.background=bg;
+ if(reduce.matches)i.painter.draw(5);else i.painter.draw(i.options.loop?i.time%5:i.time,i.options.idle&&!i.options.loop&&i.time>=5);
+}
+const observer='IntersectionObserver'in window?new IntersectionObserver(entries=>{
+ for(const entry of entries){const i=instances.get(entry.target);if(i)i.visible=entry.isIntersecting;}
+ last=0;wake();
+},{threshold:0}):null;
+function init(){
+ if(disposed)return;
+ document.querySelectorAll('[data-ff-logo]').forEach(host=>{
+  if(instances.has(host))return;
+  const fragment=template.content.cloneNode(true),suffix='-'+(++serial);
+  fragment.querySelectorAll('[id]').forEach(el=>{const old=el.id;el.id=old+suffix;fragment.querySelectorAll('[clip-path],[mask]').forEach(ref=>{
+   for(const a of ['clip-path','mask'])if(ref.getAttribute(a)==='url(#'+old+')')ref.setAttribute(a,'url(#'+old+suffix+')');
+  });});
+  host.appendChild(fragment);
+  const i={host,painter:new Painter(host.querySelector('svg')),time:0,visible:false,options:{...defaults,background:host.dataset.background||defaults.background,size:host.dataset.size||defaults.size,loop:host.dataset.loop==='true'||defaults.loop,idle:host.dataset.idle!=='false'&&defaults.idle}};
+  instances.set(host,i);refresh(i);if(observer)observer.observe(host);else i.visible=true;
+ });wake();
+}
+function visibility(){stop();wake();}
+function reduced(){stop();instances.forEach(refresh);wake();}
+document.addEventListener('visibilitychange',visibility);
+reduce.addEventListener('change',reduced);
+const mutations=new MutationObserver(records=>{
+ if(records.some(r=>r.addedNodes.length||r.removedNodes.length)){
+  for(const [host,i]of instances)if(!host.isConnected){observer?.unobserve(host);instances.delete(host);}
+  init();
+ }
+});
+mutations.observe(document.documentElement,{childList:true,subtree:true});
+window.FFLogo={
+ play(){manuallyPaused=false;last=0;wake();},
+ pause(){manuallyPaused=true;stop();},
+ restart(){instances.forEach(i=>{i.time=0;refresh(i);});manuallyPaused=false;stop();wake();},
+ setSpeed(x){if(!Number.isFinite(x)||x<=0)throw new RangeError('Speed must be a positive finite number');speed=x;last=0;},
+ setOptions(options={}){
+  if(options.background&&!['lime','ink','transparent'].includes(options.background))throw new RangeError('Unknown background');
+  const changes={};for(const key of ['loop','idle','background','size'])if(key in options)changes[key]=defaults[key]=options[key];
+  instances.forEach(i=>{Object.assign(i.options,changes);refresh(i);});stop();wake();
+ },
+ destroy(){disposed=true;stop();observer?.disconnect();mutations.disconnect();document.removeEventListener('visibilitychange',visibility);reduce.removeEventListener('change',reduced);document.removeEventListener('DOMContentLoaded',init);instances.forEach(i=>i.painter.draw(5));instances.clear();}
+};
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
+/* FF:WEB-END */
+})();
+</script>
+</body>
+</html>

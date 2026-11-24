@@ -1,0 +1,30 @@
+# Framesflow hosted MCP (Cloudflare Workers, free plan). See ../README.md for the 10-minute setup.
+name = "framesflow-mcp"
+main = "src/index.js"
+compatibility_date = "2025-09-01"
+
+# The public MCP link will be https://mcp.framesflow.online/mcp.
+# Needs framesflow.online to use Cloudflare DNS (free). Until then the Worker is also reachable at its *.workers.dev address.
+routes = [{ pattern = "mcp.framesflow.online", custom_domain = true }]
+
+[vars]
+# where your studio website lives (login + consent page); also the only origin allowed to approve connections
+APP_URL = "https://framesflow.online"
+# Supabase project (Project settings → API). The anon key is public by design.
+SUPABASE_URL = "https://YOUR-PROJECT.supabase.co"
+SUPABASE_ANON_KEY = "YOUR-ANON-KEY"
+
+# OAuth state: clients, codes and tokens (create with: npx wrangler kv namespace create OAUTH)
+[[kv_namespaces]]
+binding = "OAUTH"
+id = "REPLACE_WITH_KV_NAMESPACE_ID"
+
+# one relay per user, holds the WebSocket to their open studio tab
+[[durable_objects.bindings]]
+name = "RELAY"
+class_name = "StudioRelay"
+
+# SQLite-backed Durable Objects are available on the free plan
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["StudioRelay"]

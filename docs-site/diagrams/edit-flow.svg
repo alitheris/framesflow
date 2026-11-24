@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 330" role="img" aria-label="What happens when a tool is called">
+<defs>
+<marker id="a2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#8fa06a"/></marker>
+<style>
+.b{fill:#161a12;stroke:#3a4233;stroke-width:1.5}.h{fill:#1d2613;stroke:#566140;stroke-width:1.5}
+.t{fill:#e9ebdf;font:600 14px system-ui,sans-serif}.s{fill:#a3ab94;font:12px system-ui,sans-serif}.k{fill:#d8f36a;font:700 11px system-ui,sans-serif;letter-spacing:1px}
+.e{stroke:#8fa06a;stroke-width:1.6;fill:none}
+</style>
+</defs>
+<rect class="b" x="14" y="40" width="130" height="86" rx="12"/><text class="k" x="28" y="62">1</text><text class="t" x="28" y="84">Caller</text><text class="s" x="28" y="104">AI (MCP) or UI</text>
+<rect class="b" x="176" y="40" width="140" height="86" rx="12"/><text class="k" x="190" y="62">2</text><text class="t" x="190" y="84">Tool registry</text><text class="s" x="190" y="104">zod validates args</text>
+<rect class="h" x="348" y="40" width="150" height="86" rx="12"/><text class="k" x="362" y="62">3</text><text class="t" x="362" y="84">Shared op</text><text class="s" x="362" y="104">pure fn edits a draft</text>
+<rect class="b" x="530" y="40" width="160" height="86" rx="12"/><text class="k" x="544" y="62">4</text><text class="t" x="544" y="84">Store.mutate</text><text class="s" x="544" y="104">undo · rev · save</text>
+<rect class="b" x="722" y="40" width="184" height="86" rx="12"/><text class="k" x="736" y="62">5</text><text class="t" x="736" y="84">Broadcast</text><text class="s" x="736" y="104">WebSocket, ≤ ~12/s</text>
+<path class="e" d="M144 83H176" marker-end="url(#a2)"/><path class="e" d="M316 83H348" marker-end="url(#a2)"/><path class="e" d="M498 83H530" marker-end="url(#a2)"/><path class="e" d="M690 83H722" marker-end="url(#a2)"/>
+
+<rect class="b" x="530" y="190" width="160" height="86" rx="12"/><text class="k" x="544" y="212">6</text><text class="t" x="544" y="234">Studio UI</text><text class="s" x="544" y="254">timeline + preview redraw</text>
+<rect class="b" x="722" y="190" width="184" height="86" rx="12"/><text class="k" x="736" y="212">7</text><text class="t" x="736" y="234">Activity feed</text><text class="s" x="736" y="254">clip flash, playhead jump</text>
+<path class="e" d="M814 126V190" marker-end="url(#a2)"/><path class="e" d="M722 233H690" marker-end="url(#a2)"/>
+<rect class="b" x="176" y="190" width="322" height="86" rx="12"/><text class="t" x="196" y="224">Same ops, different host</text><text class="s" x="196" y="246">Helper: ops run inside the Node process.</text><text class="s" x="196" y="264">Browser mode: the same ops run in the tab.</text>
+<path class="e" d="M423 126V190" marker-end="url(#a2)" stroke-dasharray="5 5"/>
+</svg>

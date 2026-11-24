@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 500" role="img" aria-label="Framesflow architecture: one studio, three ways to run it">
+<defs>
+<marker id="a1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#8fa06a"/></marker>
+<style>
+.b{fill:#161a12;stroke:#3a4233;stroke-width:1.5}.h{fill:#1d2613;stroke:#566140;stroke-width:1.5}.l{fill:#d8f36a;stroke:none}
+.t{fill:#e9ebdf;font:600 15px system-ui,sans-serif}.s{fill:#a3ab94;font:12.5px system-ui,sans-serif}.k{fill:#d8f36a;font:600 11px system-ui,sans-serif;letter-spacing:1px}
+.e{stroke:#8fa06a;stroke-width:1.6;fill:none}.d{stroke-dasharray:5 5}
+</style>
+</defs>
+<text class="k" x="30" y="30">WHO TALKS TO THE STUDIO</text>
+<rect class="b" x="30" y="44" width="240" height="64" rx="12"/><text class="t" x="50" y="72">AI app (Claude, Cursor…)</text><text class="s" x="50" y="92">MCP over stdio, HTTP or the hosted link</text>
+<rect class="b" x="340" y="44" width="240" height="64" rx="12"/><text class="t" x="360" y="72">You</text><text class="s" x="360" y="92">mouse, keyboard, drag and drop</text>
+<rect class="b" x="650" y="44" width="240" height="64" rx="12"/><text class="t" x="670" y="72">Skill + CLI</text><text class="s" x="670" y="92">get_framesflow_skill, framesflow-studio</text>
+
+<rect class="h" x="170" y="160" width="580" height="86" rx="14"/>
+<text class="k" x="192" y="184">THE STUDIO (React web app, web/)</text>
+<text class="t" x="192" y="210">Timeline · Preview compositor · Inspector · Panels</text>
+<text class="s" x="192" y="231">One api.js surface: it talks to whichever runtime is available.</text>
+
+<rect class="b" x="30" y="318" width="270" height="150" rx="14"/>
+<text class="k" x="50" y="342">1 · BROWSER MODE</text>
+<text class="t" x="50" y="368">No install, no login</text>
+<text class="s" x="50" y="390">shared ops run in the tab</text><text class="s" x="50" y="408">projects in IndexedDB</text><text class="s" x="50" y="426">export with WebCodecs</text><text class="s" x="50" y="444">51 of 90 tools</text>
+
+<rect class="h" x="325" y="318" width="270" height="150" rx="14"/>
+<text class="k" x="345" y="342">2 · LOCAL HELPER (Node)</text>
+<text class="t" x="345" y="368">Every feature</text>
+<text class="s" x="345" y="390">REST + WebSocket + MCP at 127.0.0.1</text><text class="s" x="345" y="408">ffmpeg · yt-dlp · Whisper · Edge/Chrome</text><text class="s" x="345" y="426">image search · cut-outs · animations</text><text class="s" x="345" y="444">all 90 tools, ffmpeg render</text>
+
+<rect class="b" x="620" y="318" width="270" height="150" rx="14"/>
+<text class="k" x="640" y="342">3 · CLOUD (optional)</text>
+<text class="t" x="640" y="368">Accounts + one-link MCP</text>
+<text class="s" x="640" y="390">Cloudflare Worker + Durable Object</text><text class="s" x="640" y="408">Supabase: Google login, project JSON</text><text class="s" x="640" y="426">Stripe Checkout for contributions</text><text class="s" x="640" y="444">relays tool calls to your open tab</text>
+
+<path class="e" d="M150 108V160" marker-end="url(#a1)"/><path class="e" d="M460 108V160" marker-end="url(#a1)"/><path class="e d" d="M770 108V132H600V160" marker-end="url(#a1)"/>
+<path class="e" d="M300 246L190 318" marker-end="url(#a1)"/><path class="e" d="M460 246V318" marker-end="url(#a1)"/><path class="e" d="M620 246L755 318" marker-end="url(#a1)"/>
+</svg>

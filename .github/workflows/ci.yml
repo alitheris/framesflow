@@ -1,0 +1,29 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install ffmpeg (needed by the render tests)
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg
+      - run: npm ci
+      - name: Unit and render tests
+        run: npm test
+      - name: Build the web app
+        run: npm run build
+      - name: Regenerate the tool list and skill bundle (must be committed up to date)
+        run: |
+          npm run build:cloud
+          git diff --exit-code -- cloud/worker/src/tools.json cloud/worker/src/skill.json skills/framesflow/references/tools.md || (echo "Generated files are out of date. Run: npm run build:cloud and commit." && exit 1)
+      - name: Build the documentation site
+        run: npm run docs

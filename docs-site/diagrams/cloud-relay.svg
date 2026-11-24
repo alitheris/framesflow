@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 470" role="img" aria-label="Hosted MCP: login and tool relay">
+<defs>
+<marker id="a3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#8fa06a"/></marker>
+<style>
+.b{fill:#161a12;stroke:#3a4233;stroke-width:1.5}.h{fill:#1d2613;stroke:#566140;stroke-width:1.5}
+.t{fill:#e9ebdf;font:600 14px system-ui,sans-serif}.s{fill:#a3ab94;font:12px system-ui,sans-serif}.n{fill:#16200c;font:700 12px system-ui,sans-serif}.c{fill:#d8f36a}
+.e{stroke:#8fa06a;stroke-width:1.5;fill:none}.l{stroke:#2b3123;stroke-width:1.5;stroke-dasharray:4 5}
+</style>
+</defs>
+<rect class="b" x="20" y="14" width="190" height="52" rx="10"/><text class="t" x="40" y="38">AI app</text><text class="s" x="40" y="56">Claude, Cursor…</text>
+<rect class="h" x="270" y="14" width="190" height="52" rx="10"/><text class="t" x="290" y="38">Worker</text><text class="s" x="290" y="56">mcp.framesflow.online</text>
+<rect class="b" x="520" y="14" width="190" height="52" rx="10"/><text class="t" x="540" y="38">Studio tab</text><text class="s" x="540" y="56">framesflow.online</text>
+<rect class="b" x="740" y="14" width="160" height="52" rx="10"/><text class="t" x="760" y="38">Supabase</text><text class="s" x="760" y="56">Google login</text>
+<path class="l" d="M115 66V450M365 66V450M615 66V450M820 66V450"/>
+
+<path class="e" d="M115 104H365" marker-end="url(#a3)"/><circle class="c" cx="132" cy="104" r="11"/><text class="n" x="128" y="108">1</text><text class="s" x="150" y="96">register + /authorize (PKCE)</text>
+<path class="e" d="M365 140H615" marker-end="url(#a3)"/><circle class="c" cx="382" cy="140" r="11"/><text class="n" x="378" y="144">2</text><text class="s" x="400" y="132">redirect to #/authorize</text>
+<path class="e" d="M615 176H820" marker-end="url(#a3)"/><circle class="c" cx="632" cy="176" r="11"/><text class="n" x="628" y="180">3</text><text class="s" x="650" y="168">Sign in with Google</text>
+<path class="e" d="M615 212H365" marker-end="url(#a3)"/><circle class="c" cx="598" cy="212" r="11"/><text class="n" x="594" y="216">4</text><text class="s" x="400" y="204">user taps Allow (token verified by Supabase)</text>
+<path class="e" d="M365 248H115" marker-end="url(#a3)"/><circle class="c" cx="348" cy="248" r="11"/><text class="n" x="344" y="252">5</text><text class="s" x="150" y="240">one-time code, then /token → access + refresh token</text>
+
+<path class="e" d="M115 300H365" marker-end="url(#a3)"/><circle class="c" cx="132" cy="300" r="11"/><text class="n" x="128" y="304">6</text><text class="s" x="150" y="292">tools/call get_project</text>
+<path class="e" d="M365 336H615" marker-end="url(#a3)"/><circle class="c" cx="382" cy="336" r="11"/><text class="n" x="378" y="340">7</text><text class="s" x="400" y="328">Durable Object → WebSocket {call}</text>
+<path class="e" d="M615 372H365" marker-end="url(#a3)"/><circle class="c" cx="598" cy="372" r="11"/><text class="n" x="594" y="376">8</text><text class="s" x="400" y="364">tab runs the tool on the project → {result}</text>
+<path class="e" d="M365 408H115" marker-end="url(#a3)"/><circle class="c" cx="348" cy="408" r="11"/><text class="n" x="344" y="412">9</text><text class="s" x="150" y="400">MCP result (text and images)</text>
+<text class="s" x="20" y="460">Steps 1–5 happen once. Steps 6–9 repeat for every tool call.</text>
+</svg>

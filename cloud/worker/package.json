@@ -1,0 +1,17 @@
+{
+  "name": "framesflow-cloud-worker",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Hosted MCP endpoint for Framesflow Studio: OAuth login (Supabase/Google) + relay to the user's open studio tab.",
+  "scripts": {
+    "manifest": "node ../../scripts/export-tools.mjs && node ../../scripts/build-skill.mjs",
+    "dev": "wrangler dev",
+    "deploy": "npm run manifest && wrangler deploy",
+    "test": "node --test test/flow.test.mjs test/donate.test.mjs"
+  },
+  "devDependencies": {
+    "wrangler": "4.45.0"
+  },
+  "license": "MIT"
+}
